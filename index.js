@@ -84,20 +84,27 @@ app.post("/read-file", upload.single("file"), async (req, res) => {
 
 app.post("/generate-transcript", async (req, res) => {
   try {
-    const transcript = await YoutubeTranscript.fetchTranscript(
-      "https://www.youtube.com/watch?v=IPvYjXCsTg8"
-    );
+    const { videoUrl } = req.body;
+
+    if (!videoUrl) {
+      return res.status(400).json({ error: "Video URL is required" });
+    }
+
+    const transcript = await YoutubeTranscript.fetchTranscript(videoUrl);
 
     // Extract and join the text from each object
     const transcriptText = transcript.map((entry) => entry.text).join(" ");
-    prompt =
-      "You are Yotube video summarizer. You will be taking the transcript text and summarizing the entire video and providing the  detailed in 25 points. Please provide the detailed notes from the transcript :  ";
+
+    const prompt =
+      "You are a YouTube video summarizer. You will be taking the transcript text and summarizing the entire video and providing the details in 25 points. Please provide the detailed notes from the transcript: ";
+
     // Send the concatenated string in the response
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const result = await model.generateContent(prompt + transcriptText);
 
     const response = await result.response;
     const text = await response.text();
+
     return res.json({ transcript: text });
   } catch (error) {
     console.error("Error fetching transcript:", error);

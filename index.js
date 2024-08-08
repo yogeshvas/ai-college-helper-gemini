@@ -85,7 +85,7 @@ app.post("/read-file", upload.single("file"), async (req, res) => {
 app.post("/generate-transcript", async (req, res) => {
   try {
     const { videoUrl } = req.body;
-
+    console.log(1);
     if (!videoUrl) {
       return res.status(400).json({ error: "Video URL is required" });
     }
@@ -108,7 +108,7 @@ app.post("/generate-transcript", async (req, res) => {
     return res.json({ transcript: text });
   } catch (error) {
     console.error("Error fetching transcript:", error);
-    return res.status(500).json({ error: "Failed to fetch transcript" });
+    return res.status(500).json({ error: error });
   }
 });
 

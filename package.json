@@ -14,6 +14,8 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.1.4",
+    "youtube-transcript": "^1.2.1",
     "youtube-transcript-api": "^1.1.2"
   }
 }

@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { YoutubeTranscript } = require("youtube-transcript");
+const TranscriptAPI = require("youtube-transcript-api");
 require("dotenv").config(); // For loading environment variables from a .env file
 
 const app = express();
@@ -90,7 +91,7 @@ app.post("/generate-transcript", async (req, res) => {
       return res.status(400).json({ error: "Video URL is required" });
     }
 
-    const transcript = await YoutubeTranscript.fetchTranscript(videoUrl);
+    const transcript = await TranscriptAPI.getTranscript("HFfXvfFe9F8");
 
     // Extract and join the text from each object
     const transcriptText = transcript.map((entry) => entry.text).join(" ");

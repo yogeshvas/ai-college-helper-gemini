@@ -178,7 +178,6 @@ app.post("/read-file-to-quiz", upload.single("file"), async (req, res) => {
   }
 });
 
-
 app.post("/ask-question", async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -200,7 +199,6 @@ app.post("/ask-question", async (req, res) => {
       .json({ error: "An error occurred while generating content" });
   }
 });
-
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

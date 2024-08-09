@@ -178,6 +178,30 @@ app.post("/read-file-to-quiz", upload.single("file"), async (req, res) => {
   }
 });
 
+
+app.post("/ask-question", async (req, res) => {
+  try {
+    const { prompt } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({ error: "Prompt is required" });
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = await response.text();
+
+    res.json({ generatedText: text });
+  } catch (error) {
+    console.error("Error generating content:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while generating content" });
+  }
+});
+
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

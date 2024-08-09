@@ -113,6 +113,71 @@ app.post("/generate-transcript", async (req, res) => {
   }
 });
 
+app.post("/read-file", upload.single("file"), async (req, res) => {
+  try {
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ error: "File is required" });
+    }
+
+    let prompt;
+    const { type } = req.body;
+    if (type == "que") {
+      prompt = "Give me top 10 most important question from this file.";
+    } else {
+      prompt = "whats in this file, explain in 10 point.";
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const filePart = fileToGenerativePart(file);
+    const result = await model.generateContent([prompt, filePart]);
+
+    const response = await result.response;
+    const text = await response.text();
+
+    res.json({ generatedText: text });
+  } catch (error) {
+    console.error("Error generating content:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while generating content" });
+  }
+});
+
+app.post("/read-file-to-quiz", upload.single("file"), async (req, res) => {
+  try {
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ error: "File is required" });
+    }
+
+    let prompt;
+    const { type } = req.body;
+    // if (type == "que") {
+    //   prompt = "Give me top 10 most important question from this file.";
+    // } else {
+    //   prompt = "whats in this file, explain in 10 point.";
+    // }
+    prompt =
+      "Give me top 10 most important question from this file with answers.";
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const filePart = fileToGenerativePart(file);
+    const result = await model.generateContent([prompt, filePart]);
+
+    const response = await result.response;
+    const text = await response.text();
+
+    res.json({ generatedText: text });
+  } catch (error) {
+    console.error("Error generating content:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while generating content" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
